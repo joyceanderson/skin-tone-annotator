@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skin Tone Annotation Tool</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header class="text-center my-4">
+            <h1>Skin Tone Annotation Tool</h1>
+            <p class="lead">Upload and annotate images to mark affected and unaffected skin areas</p>
+        </header>
+
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 id="image-title">No Image Loaded</h5>
+                        <span id="selection-mode-indicator" class="badge bg-secondary">No Selection Mode</span>
+                    </div>
+                    <div class="card-body text-center">
+                        <div id="image-container" class="position-relative">
+                            <canvas id="annotation-canvas" class="img-fluid"></canvas>
+                        </div>
+                        <div id="no-image-message" class="py-5">
+                            <p class="text-muted">Upload an image to begin annotation</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Image Navigation</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <button id="prev-image" class="btn btn-outline-primary" disabled>
+                                <i class="bi bi-arrow-left"></i> Previous
+                            </button>
+                            <span id="image-counter" class="text-muted">Image 0 of 0</span>
+                            <button id="next-image" class="btn btn-outline-primary" disabled>
+                                Next <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                        <hr>
+                        <h6>Manual Upload</h6>
+                        <form id="upload-form" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="file" class="form-label">Select Image</label>
+                                <input type="file" class="form-control" id="file" name="file" accept=".jpg,.jpeg,.png">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Upload</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Annotation Controls</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Selection Mode</label>
+                            <div class="d-flex gap-2 mb-2">
+                                <button id="unaffected-btn" class="btn btn-outline-success" disabled>Unaffected (U)</button>
+                                <button id="affected-btn" class="btn btn-outline-danger" disabled>Affected (A)</button>
+                                <button id="none-btn" class="btn btn-outline-secondary" disabled>None (C)</button>
+                            </div>
+                            <small class="text-muted d-block mb-3">Select mode before clicking on image points</small>
+                        </div>
+                        <div class="mb-3">
+                            <button id="reset-btn" class="btn btn-warning" disabled>Reset (R)</button>
+                            <button id="save-btn" class="btn btn-success" disabled>Save (S)</button>
+                            <div class="mt-2">
+                                <small class="text-muted"><strong>Reset (R)</strong>: Clear points on current image</small><br>
+                                <small class="text-muted"><strong>None (C)</strong>: Stop adding points</small>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <p class="mb-1"><small>Keyboard shortcuts in parentheses</small></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Results</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="current-results">
+                            <p>No annotations yet</p>
+                        </div>
+                        <hr>
+                        <h6>Sample Preview</h6>
+                        <div class="d-flex gap-3 mb-3">
+                            <div>
+                                <div id="unaffected-color-preview" class="color-preview"></div>
+                                <small>Unaffected</small>
+                            </div>
+                            <div>
+                                <div id="affected-color-preview" class="color-preview"></div>
+                                <small>Affected</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Previous Annotations</h5>
+                        <div>
+                            <button id="reset-all-btn" class="btn btn-sm btn-danger me-2">
+                                <i class="bi bi-trash"></i> Reset All
+                            </button>
+                            <a id="download-csv" href="/download_csv" class="btn btn-sm btn-success">
+                                <i class="bi bi-download"></i> Download CSV
+                            </a>
+                            <div class="mt-2 small text-muted">
+                                <strong>Reset All</strong>: Delete all saved annotations
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Subject ID</th>
+                                        <th>Unaffected RGB</th>
+                                        <th>Affected RGB</th>
+                                        <th>Unaffected HEX</th>
+                                        <th>Affected HEX</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="annotations-table">
+                                    <tr>
+                                        <td colspan="5" class="text-center">No annotations yet</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification toast -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="notification-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto" id="toast-title">Notification</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toast-message">
+                Message here
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+/* Main Styles */
+body {
+    background-color: #f8f9fa;
+    padding-bottom: 3rem;
+}
+
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1.5rem;
+}
+
+/* Image Container */
+#image-container {
+    max-height: 600px;
+    overflow: auto;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    cursor: crosshair;
+    margin: 0 auto;
+    max-width: 800px;
+}
+
+#annotation-canvas {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Color Preview */
+.color-preview {
+    width: 50px;
+    height: 50px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+}
+
+/* Ensure the table is responsive */
+.table-responsive {
+    overflow-x: auto;
+}
+
+/* Add some spacing between rows */
+.row {
+    margin-bottom: 1rem;
+}
+
+/* Selection Mode Indicator */
+.selection-mode-unaffected {
+    background-color: #198754 !important;
+}
+
+.selection-mode-affected {
+    background-color: #dc3545 !important;
+}
+
+/* Annotation Points */
+.annotation-point {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.annotation-point-unaffected {
+    background-color: #198754;
+    border: 1px solid #fff;
+}
+
+.annotation-point-affected {
+    background-color: #dc3545;
+    border: 1px solid #fff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #image-container {
+        max-height: 300px;
+    }
+    
+    .color-preview {
+        width: 30px;
+        height: 30px;
+    }
+}
