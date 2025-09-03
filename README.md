@@ -28,26 +28,6 @@ python app.py
 
 3. Open your web browser and navigate to `http://127.0.0.1:5000`
 
-## Deployment to Render
-
-To deploy this application to Render and access it from anywhere:
-
-1. Create a free account on [Render.com](https://render.com)
-
-2. Create a new Web Service:
-   - Connect to your GitHub repository or upload the code directly
-   - Select Python as the runtime
-   - Set the build command: `pip install -r requirements.txt`
-   - Set the start command: `gunicorn app:app`
-   - Choose the free plan
-
-3. Deploy the application:
-   - Click "Create Web Service"
-   - Wait for the deployment to complete (usually takes 2-5 minutes)
-   - Access your app at the provided URL (e.g., `https://skin-tone-annotator.onrender.com`)
-
-4. Your images and annotations will be stored on Render's persistent disk storage
-
 ## How to Use
 
 1. **Upload an image**: Click "Choose File" and select an image to annotate.
